@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         while ($row = $result->fetch_assoc()) {
             $restaurants[] = $row;
         }
-        echo json_encode(["restaurants" => $restaurants]);
+        echo json_encode(["restaurants" => $restaurants,"status"=>"success"]);
     } else {
-        echo json_encode(["message" => "no records were found"]);
+        echo json_encode(["message" => "no records were found","status"=>"faliure"]);
     }
 } else {
 echo json_encode(["error" => "Wrong request method"]);
