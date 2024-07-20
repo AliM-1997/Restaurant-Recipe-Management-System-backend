@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     if ($result->num_rows > 0) {
         $stm = $conn->prepare("
-        select rs.name as resturant_name,r.name as recipe_name,r.details as recipe_details
+        select rs.name as resturant_name,r.id as recipe_id, r.name as recipe_name,r.details as recipe_details
         from recipes r 
         join resturants rs on rs.id=r.resturant_id
         where rs.name=?");
