@@ -1,30 +1,37 @@
 <?php
-
 require "../connection.php";
 
-if($_SERVER["REQUEST_METHOD"]=="POST"){
-    $resturant_id=$_POST['resturant_id'];
-    $name=$_POST['name'];
-    $details=$_POST['details'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $data = json_decode(file_get_contents('php://input'), true);
 
-    $stm=$conn->prepare("select * from recipes where name=?");
-    $stm->bind_param("s",$name);
-    $stm->execute();
-    $result=$stm->get_result();
-    if ( $result->num_rows>0){
-        echo json_encode(["message"=>"the item is already exist with name $name"]);
-    }
-    else{
-        $stm=$conn->prepare("insert into recipes (resturant_id,name,details) value (?,?,?)");
-        $stm->bind_param("iss",$resturant_id,$name,$details);
-        try {
-            $stm->execute();
-            echo json_encode(["message"=>"recipe added successfully","status"=>"success"]);
-        } catch (Exception $e) {
-            echo json_encode(["message"=>$stm->error,"status"=>"failure"]);
+
+    if (isset($data['resturant_id'], $data['name'], $data['details'])) {
+        $resturant_id = $data['resturant_id'];
+        $name = $data['name'];
+        $details = $data['details'];
+
+        $stm = $conn->prepare("SELECT * FROM recipes WHERE name = ?");
+        $stm->bind_param("s", $name);
+        $stm->execute();
+        $result = $stm->get_result();
+
+        if ($result->num_rows > 0) {
+            echo json_encode(["message" => "The item already exists with the name $name"]);
+        } else {
+            $stm = $conn->prepare("insert into recipes (resturant_id, name, details) values (?, ?, ?)");
+            $stm->bind_param("iss", $resturant_id, $name, $details);
+
+            try {
+                $stm->execute();
+                echo json_encode(["message" => "Recipe added successfully", "status" => "success"]);
+            } catch (Exception $e) {
+                echo json_encode(["message" => $e->getMessage(), "status" => "failure"]);
+            }
         }
+    } else {
+        echo json_encode(["message" => "Invalid input"]);
     }
-
-}else{
-    echo json_encode(["message"=>"wrong request method"]);
+} else {
+    echo json_encode(["message" => "Wrong request method"]);
 }
+?>
