@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     $recipes = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $recipes[] = $row;
+            $recipes[] = $row;  
         }
         echo json_encode(["recipes" => $recipes,"status"=>"success"]);
     } else {

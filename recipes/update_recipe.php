@@ -2,13 +2,20 @@
 
 require '../connection.php';
 if($_SERVER["REQUEST_METHOD"]=="POST"){
-    $id=$_POST["id"];
-    $details=$_POST['details'];
-    $name=$_POST["name"];
+
+    $data = json_decode(file_get_contents('php://input'), true);
+   
+
+    $id=$data["id"];
+    $details=$data['details'];
+    $resturant_id =$data["resturant_id"];
+    $name=$data["name"];
+
+
 
     if ($details !="" && $name !=""){   
-    $stm=$conn->prepare("update recipes Set details = ?, name = ? WHERE id = ?");
-    $stm->bind_param("ssi",$details,$name,$id);
+    $stm=$conn->prepare("update recipes Set details = ?, name = ?, resturant_id=? WHERE id = ?");
+    $stm->bind_param("ssii",$details,$name,$resturant_id,$id);
     try {
         $stm->execute();
         echo json_encode(["message"=>"the recipe is updated","status"=>"success"]);
